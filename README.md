@@ -31,7 +31,9 @@ npm run server
 npm run dev
 ```
 
-During development, Vite proxies `/api` requests to `http://localhost:5174`. In production, run `npm run build` and serve the built app through `npm run server` so the frontend and mail API share the same origin.
+During development, Vite proxies `/api` requests to `http://localhost:5174`.
+
+For Vercel production, add these same SMTP values in Project Settings -> Environment Variables. Vercel uses the serverless functions in `api/booking.js` and `api/contact.js` for `/api/booking` and `/api/contact`.
 
 Currently, two official plugins are available:
 
