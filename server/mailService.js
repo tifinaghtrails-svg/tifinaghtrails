@@ -23,7 +23,33 @@ const transporter = () =>
 
 export const isEmail = (value) => /\S+@\S+\.\S+/.test(String(value || ""));
 
-export const clean = (value) => String(value || "").trim().slice(0, 2000);
+const removeControlCharacters = (value) =>
+  Array.from(value)
+    .map((char) => {
+      const code = char.charCodeAt(0);
+      return code < 32 || code === 127 ? " " : char;
+    })
+    .join("");
+
+export const clean = (value, maxLength = 2000) =>
+  removeControlCharacters(String(value || ""))
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, maxLength);
+
+const toPlainText = (html) =>
+  String(html || "")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
 
 export const reference = (prefix) =>
   `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
@@ -46,6 +72,7 @@ const sendPair = async ({ customerEmail, subjectOwner, subjectCustomer, ownerHtm
       replyTo,
       subject: subjectOwner,
       html: ownerHtml,
+      text: toPlainText(ownerHtml),
     }),
     mailer.sendMail({
       from: process.env.SMTP_FROM,
@@ -53,27 +80,30 @@ const sendPair = async ({ customerEmail, subjectOwner, subjectCustomer, ownerHtm
       replyTo: ownerEmail,
       subject: subjectCustomer,
       html: customerHtml,
+      text: toPlainText(customerHtml),
     }),
   ]);
 };
 
 export const bookingFromBody = (body = {}) => ({
   reference: reference("TAG"),
-  fullName: clean(body.fullName),
-  email: clean(body.email),
-  phone: clean(body.phone),
-  nationality: clean(body.nationality),
-  selectedTour: clean(body.selectedTour),
-  tourTitle: clean(body.tourTitle),
-  date: clean(body.date),
-  travelers: clean(body.travelers),
-  fitness: clean(body.fitness),
-  message: clean(body.message),
+  fullName: clean(body.fullName, 120),
+  email: clean(body.email, 254),
+  phone: clean(body.phone, 80),
+  nationality: clean(body.nationality, 80),
+  selectedTour: clean(body.selectedTour, 160),
+  tourTitle: clean(body.tourTitle, 160),
+  date: clean(body.date, 40),
+  travelers: clean(body.travelers, 40),
+  fitness: clean(body.fitness, 80),
+  message: clean(body.message, 2000),
+  website: clean(body.website, 120),
 });
 
 export const validateBooking = (booking) =>
   Boolean(
     booking.fullName &&
+      !booking.website &&
       isEmail(booking.email) &&
       booking.phone &&
       booking.nationality &&
@@ -84,13 +114,15 @@ export const validateBooking = (booking) =>
 
 export const contactFromBody = (body = {}) => ({
   reference: reference("MSG"),
-  name: clean(body.name),
-  email: clean(body.email),
-  subject: clean(body.subject),
-  message: clean(body.message),
+  name: clean(body.name, 120),
+  email: clean(body.email, 254),
+  subject: clean(body.subject, 160),
+  message: clean(body.message, 2000),
+  website: clean(body.website, 120),
 });
 
-export const validateContact = (message) => Boolean(message.name && isEmail(message.email) && message.message);
+export const validateContact = (message) =>
+  Boolean(message.name && !message.website && isEmail(message.email) && message.message);
 
 export const sendBookingEmails = async (booking) =>
   sendPair({

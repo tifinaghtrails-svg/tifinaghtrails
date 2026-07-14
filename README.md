@@ -1,13 +1,46 @@
-# React + Vite
+# TifinaghTrails
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TifinaghTrails is a React/Vite website for guided Mount Toubkal and High Atlas trekking tours from Imlil and Marrakech, Morocco. It includes tour pages, destination content, gallery, FAQ, contact and booking forms, SMTP email notifications, Vercel Analytics, Speed Insights, generated SEO files, and build-time prerendered route HTML.
 
-## SMTP mail service
+## Main Features
 
-This project includes a small Express SMTP API for booking and contact forms.
+- Public pages for home, about, tours, tour details, destinations, gallery, FAQ, contact, booking, and 404.
+- Professional booking and contact email flow using Gmail SMTP through local Express and Vercel serverless API routes.
+- Customer confirmation emails and owner notification emails.
+- Central site config for brand, canonical URL, email, phone, WhatsApp, locale, address, and service area.
+- Generated `sitemap.xml` and `robots.txt`.
+- Build-time prerendered HTML for all public routes.
+- Vercel Analytics and Speed Insights.
+- Optional Google Search Console verification and Google Tag Manager.
+- API hardening with method checks, validation, honeypot field, body-size handling, safe errors, and plain-text email fallbacks.
 
-1. Copy `.env.example` to `.env`.
-2. Add your real SMTP credentials and Mustapha's receiving email:
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the local mail API:
+
+```bash
+npm run server
+```
+
+Start the React app:
+
+```bash
+npm run dev
+```
+
+During development, Vite proxies `/api` requests to `http://localhost:5174`.
+
+## Environment Variables
+
+Copy `.env.example` to `.env` for local development. Keep `.env` private.
+
+Required SMTP values:
 
 ```env
 OWNER_EMAIL=tifinaghtrails@gmail.com
@@ -19,31 +52,25 @@ SMTP_PASS=your-smtp-password
 SMTP_FROM="TifinaghTrails <tifinaghtrails@gmail.com>"
 ```
 
-3. Start the mail API:
+Optional public values:
 
-```bash
-npm run server
+```env
+VITE_GOOGLE_SITE_VERIFICATION=
+VITE_GTM_ID=
+VITE_NOINDEX=false
 ```
 
-4. In another terminal, start the React app:
+## Build And SEO Checks
 
 ```bash
-npm run dev
+npm run build
+npm run test:seo
 ```
 
-During development, Vite proxies `/api` requests to `http://localhost:5174`.
+The build generates route-specific HTML, `sitemap.xml`, and `robots.txt` in `dist`.
 
-For Vercel production, add these same SMTP values in Project Settings -> Environment Variables. Vercel uses the serverless functions in `api/booking.js` and `api/contact.js` for `/api/booking` and `/api/contact`.
+## Vercel
 
-Currently, two official plugins are available:
+Add the SMTP variables in Vercel Project Settings, then deploy the `main` branch. The serverless functions in `api/booking.js` and `api/contact.js` handle production form submissions.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+See `docs/DEPLOYMENT_CHECKLIST.md` and `docs/GOOGLE_SEARCH_CONSOLE_SETUP.md`.

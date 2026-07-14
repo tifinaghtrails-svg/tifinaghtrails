@@ -1,13 +1,16 @@
 {
-  "name": "toubkal-guide-react",
+  "name": "tifinaghtrails",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "server": "node server/index.js",
+    "prebuild": "node scripts/generate-sitemap.js",
     "build": "vite build",
+    "postbuild": "node scripts/prerender.js && node scripts/generate-sitemap.js",
     "lint": "eslint .",
+    "test:seo": "node scripts/test-seo.js",
     "preview": "vite preview"
   },
   "dependencies": {

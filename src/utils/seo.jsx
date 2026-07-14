@@ -1,22 +1,26 @@
 import { Helmet } from "react-helmet-async";
+import { canonicalUrl, siteConfig } from "../config/site";
 
-const SITE_URL = "https://tifinaghtrails.com";
-const SITE_NAME = "TifinaghTrails";
-const DEFAULT_OG_IMAGE = "/images/mustapha/1000144629.jpg";
+const previewNoIndex = import.meta.env.VITE_NOINDEX === "true";
+const googleSiteVerification = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION;
 
 export default function SEO({ title, description, path, ogImage, ogType, noIndex, children }) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
-  const url = `${SITE_URL}${path || "/"}`;
-  const image = ogImage || DEFAULT_OG_IMAGE;
-  const imageUrl = image.startsWith("http") ? image : `${SITE_URL}${image}`;
+  const fullTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
+  const url = canonicalUrl(path || "/");
+  const image = ogImage || siteConfig.defaultOgImage;
+  const imageUrl = image.startsWith("http") ? image : `${siteConfig.siteUrl}${image}`;
+  const shouldNoIndex = noIndex || previewNoIndex;
 
   return (
     <Helmet>
+      <html lang={siteConfig.language} />
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
+      <meta name="robots" content={shouldNoIndex ? "noindex, nofollow" : "index, follow"} />
+      <meta property="og:locale" content={siteConfig.defaultLocale} />
       <meta property="og:type" content={ogType || "website"} />
-      <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:site_name" content={siteConfig.name} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
@@ -27,7 +31,9 @@ export default function SEO({ title, description, path, ogImage, ogType, noIndex
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
-      {noIndex && <meta name="robots" content="noindex" />}
+      {googleSiteVerification && (
+        <meta name="google-site-verification" content={googleSiteVerification} />
+      )}
       {children}
     </Helmet>
   );
@@ -45,30 +51,33 @@ export function LocalBusinessJsonLd() {
   return jsonLd({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": `${SITE_URL}/#business`,
-    name: SITE_NAME,
-    description: "Certified local mountain guide in Mount Toubkal, Morocco. Berber-led trekking tours in the High Atlas Mountains since 2014.",
-    url: SITE_URL,
-    telephone: "+212-657-794841",
-    email: "tifinaghtrails@gmail.com",
-    image: `${SITE_URL}/images/mustapha/1000144629.jpg`,
+    "@id": `${siteConfig.siteUrl}/#business`,
+    name: siteConfig.name,
+    alternateName: siteConfig.alternateName,
+    description:
+      "Local mountain guide in Mount Toubkal, Morocco. Berber-led trekking tours in the High Atlas Mountains from Imlil.",
+    url: siteConfig.siteUrl,
+    telephone: siteConfig.phone,
+    email: siteConfig.email,
+    image: `${siteConfig.siteUrl}${siteConfig.defaultOgImage}`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Imlil, High Atlas Mountains",
-      addressLocality: "Marrakech-Tensift-El Haouz",
-      addressCountry: "MA"
+      streetAddress: siteConfig.address.streetAddress,
+      addressLocality: siteConfig.address.locality,
+      addressRegion: siteConfig.address.region,
+      addressCountry: siteConfig.address.country,
     },
     geo: {
       "@type": "GeoCoordinates",
       latitude: 31.138,
-      longitude: -7.919
+      longitude: -7.919,
     },
     openingHours: "Mo-Su 06:00-20:00",
-    priceRange: "€€",
-    areaServed: {
-      "@type": "City",
-      name: "Mount Toubkal, High Atlas, Morocco"
-    },
+    priceRange: "EUR",
+    areaServed: siteConfig.serviceArea.map((area) => ({
+      "@type": "Place",
+      name: area,
+    })),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Trekking Tours",
@@ -76,15 +85,9 @@ export function LocalBusinessJsonLd() {
         { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mount Toubkal Ascent" } },
         { "@type": "Offer", itemOffered: { "@type": "Service", name: "Berber Village Day Trip" } },
         { "@type": "Offer", itemOffered: { "@type": "Service", name: "Multi-Day Valley Treks" } },
-        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom Private Treks" } }
-      ]
+        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom Private Treks" } },
+      ],
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "87",
-      bestRating: "5"
-    }
   });
 }
 
@@ -92,11 +95,11 @@ export function TourJsonLd({ tour }) {
   return jsonLd({
     "@context": "https://schema.org",
     "@type": "TouristTrip",
-    "@id": `${SITE_URL}/tours/${tour.slug}#tour`,
+    "@id": `${siteConfig.siteUrl}/tours/${tour.slug}#tour`,
     name: tour.title,
     description: tour.shortDescription,
-    url: `${SITE_URL}/tours/${tour.slug}`,
-    image: tour.image.startsWith("http") ? tour.image : `${SITE_URL}${tour.image}`,
+    url: `${siteConfig.siteUrl}/tours/${tour.slug}`,
+    image: tour.image.startsWith("http") ? tour.image : `${siteConfig.siteUrl}${tour.image}`,
     touristType: tour.difficultyLabel,
     duration: tour.duration,
     offers: {
@@ -104,13 +107,13 @@ export function TourJsonLd({ tour }) {
       price: tour.price,
       priceCurrency: "EUR",
       availability: "https://schema.org/InStock",
-      url: `${SITE_URL}/tours/${tour.slug}`
+      url: `${siteConfig.siteUrl}/tours/${tour.slug}`,
     },
-    itinerary: tour.itinerary.map(day => ({
+    itinerary: tour.itinerary.map((day) => ({
       "@type": "Itinerary",
       name: day.title,
-      description: day.description
-    }))
+      description: day.description,
+    })),
   });
 }
 
@@ -119,13 +122,13 @@ export function BreadcrumbJsonLd({ items }) {
     "@type": "ListItem",
     position: index + 1,
     name: item.name,
-    item: `${SITE_URL}${item.path}`
+    item: canonicalUrl(item.path),
   }));
 
   return jsonLd({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement
+    itemListElement,
   });
 }
 
@@ -133,13 +136,13 @@ export function FAQJsonLd({ faqs }) {
   return jsonLd({
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map(faq => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
       name: faq.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: faq.answer
-      }
-    }))
+        text: faq.answer,
+      },
+    })),
   });
 }

@@ -1,5 +1,6 @@
 import SEO, { BreadcrumbJsonLd } from "../utils/seo";
 import BookingForm from "../components/common/BookingForm";
+import { siteConfig } from "../config/site";
 
 export default function Booking() {
   return (
@@ -39,7 +40,7 @@ export default function Booking() {
                 <p style={{ fontSize: "0.85rem", margin: 0, textAlign: "center" }}>
                   <strong>Need help?</strong><br />
                   <a
-                    href="https://wa.me/212657794841"
+                    href={siteConfig.whatsappUrl}
                     style={{ color: "var(--color-whatsapp)", fontWeight: 600 }}
                     target="_blank"
                     rel="noopener noreferrer"

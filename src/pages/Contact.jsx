@@ -2,10 +2,7 @@ import SEO, { BreadcrumbJsonLd } from "../utils/seo";
 import ContactForm from "../components/common/ContactForm";
 import Button from "../components/common/Button";
 import SectionHeader from "../components/common/SectionHeader";
-
-const WHATSAPP_NUMBER = "+212 657-794841";
-const WHATSAPP_LINK = "https://wa.me/212657794841";
-const EMAIL = "tifinaghtrails@gmail.com";
+import { siteConfig } from "../config/site";
 
 export default function Contact() {
   return (
@@ -49,9 +46,9 @@ export default function Contact() {
                 <div className="contact-card">
                   <div className="contact-card-icon">&#128172;</div>
                   <h4>WhatsApp</h4>
-                  <p>{WHATSAPP_NUMBER}</p>
+                  <p>{siteConfig.displayPhone}</p>
                   <div style={{ marginTop: "1rem" }}>
-                    <Button variant="whatsapp" href={WHATSAPP_LINK}>
+                    <Button variant="whatsapp" href={siteConfig.whatsappUrl}>
                       Chat on WhatsApp
                     </Button>
                   </div>
@@ -59,9 +56,9 @@ export default function Contact() {
                 <div className="contact-card">
                   <div className="contact-card-icon">&#9993;</div>
                   <h4>Email</h4>
-                  <p>{EMAIL}</p>
+                  <p>{siteConfig.email}</p>
                   <div style={{ marginTop: "1rem" }}>
-                    <Button variant="primary" href={`mailto:${EMAIL}`}>
+                    <Button variant="primary" href={`mailto:${siteConfig.email}`}>
                       Send Email
                     </Button>
                   </div>

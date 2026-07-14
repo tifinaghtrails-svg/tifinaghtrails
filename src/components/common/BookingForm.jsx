@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import tours from "../../data/tours";
 import { sendBookingRequest } from "../../services/mailApi";
+import { siteConfig } from "../../config/site";
+import { trackBookingRequest, trackWhatsAppClick } from "../../utils/analytics";
 
 export default function BookingForm() {
   const [searchParams] = useSearchParams();
@@ -16,7 +18,8 @@ export default function BookingForm() {
     date: "",
     travelers: "1",
     fitness: "moderate",
-    message: ""
+    message: "",
+    website: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -64,6 +67,10 @@ export default function BookingForm() {
         tourTitle: selectedTour?.title || formData.selectedTour,
       });
       setConfirmation({ reference: result.reference, tourTitle: selectedTour?.title || formData.selectedTour });
+      trackBookingRequest({
+        tourSlug: formData.selectedTour,
+        travelers: formData.travelers,
+      });
       setSubmitted(true);
     } catch (error) {
       setSubmitError(error.message);
@@ -92,17 +99,18 @@ export default function BookingForm() {
               setSubmitError("");
               setFormData({
                 fullName: "", email: "", phone: "", nationality: "",
-                selectedTour: "", date: "", travelers: "1", fitness: "moderate", message: ""
+                selectedTour: "", date: "", travelers: "1", fitness: "moderate", message: "", website: ""
               });
             }}
           >
             Submit Another Booking
           </button>
           <a
-            href="https://wa.me/212657794841"
+            href={siteConfig.whatsappUrl}
             className="btn btn-whatsapp"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick({ location: "booking_success" })}
           >
             Chat on WhatsApp
           </a>
@@ -113,6 +121,16 @@ export default function BookingForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
+      <input
+        type="text"
+        name="website"
+        value={formData.website}
+        onChange={handleChange}
+        tabIndex="-1"
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ display: "none" }}
+      />
       <div className="form-row">
         <div className="form-group">
           <label className="form-label" htmlFor="fullName">

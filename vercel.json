@@ -1,0 +1,78 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.tifinaghtrails.com"
+        }
+      ],
+      "destination": "https://tifinaghtrails.com/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/about",
+      "destination": "/about/index.html"
+    },
+    {
+      "source": "/tours",
+      "destination": "/tours/index.html"
+    },
+    {
+      "source": "/tours/:slug",
+      "destination": "/tours/:slug/index.html"
+    },
+    {
+      "source": "/destinations",
+      "destination": "/destinations/index.html"
+    },
+    {
+      "source": "/gallery",
+      "destination": "/gallery/index.html"
+    },
+    {
+      "source": "/faq",
+      "destination": "/faq/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact/index.html"
+    },
+    {
+      "source": "/booking",
+      "destination": "/booking/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://vitals.vercel-insights.com https://*.vercel-insights.com https://www.google-analytics.com; frame-src https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        }
+      ]
+    }
+  ]
+}

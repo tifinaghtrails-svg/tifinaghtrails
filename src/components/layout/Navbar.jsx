@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Button from "../common/Button";
+import { siteConfig } from "../../config/site";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -15,11 +16,6 @@ const navLinks = [
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [location]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -84,18 +80,19 @@ export default function Navbar() {
               `mobile-nav-link ${isActive ? "active" : ""}`
             }
             end={link.to === "/"}
+            onClick={() => setMobileOpen(false)}
           >
             {link.label}
           </NavLink>
         ))}
         <div className="mobile-nav-actions">
-          <Button variant="accent" fullWidth to="/booking">
+          <Button variant="accent" fullWidth to="/booking" onClick={() => setMobileOpen(false)}>
             Book Now
           </Button>
           <Button
             variant="whatsapp"
             fullWidth
-            href="https://wa.me/212657794841"
+            href={siteConfig.whatsappUrl}
           >
             WhatsApp
           </Button>

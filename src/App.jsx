@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
+import OptionalTracking from "./components/layout/OptionalTracking";
 import ScrollToTopBtn from "./components/layout/ScrollToTop";
 import AppRoutes from "./routes/AppRoutes";
 
@@ -9,6 +10,7 @@ export default function App() {
     <BrowserRouter>
       <div className="page-wrapper">
         <Navbar />
+        <OptionalTracking />
         <main className="main-content">
           <AppRoutes />
         </main>

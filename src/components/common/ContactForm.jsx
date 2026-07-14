@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { sendContactMessage } from "../../services/mailApi";
-
-const WHATSAPP_NUMBER = "212657794841";
+import { siteConfig } from "../../config/site";
+import { trackContactMessage, trackWhatsAppClick } from "../../utils/analytics";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
-    message: ""
+    message: "",
+    website: ""
   });
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -45,6 +46,7 @@ export default function ContactForm() {
     try {
       const result = await sendContactMessage(formData);
       setReference(result.reference);
+      trackContactMessage({ subject: formData.subject });
       setSubmitted(true);
     } catch (error) {
       setSubmitError(error.message);
@@ -74,16 +76,17 @@ export default function ContactForm() {
               setSubmitted(false);
               setReference("");
               setSubmitError("");
-              setFormData({ name: "", email: "", subject: "", message: "" });
+              setFormData({ name: "", email: "", subject: "", message: "", website: "" });
             }}
           >
             Send Another Message
           </button>
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20TifinaghTrails%2C%20I%20need%20urgent%20assistance.`}
+            href={`${siteConfig.whatsappUrl}?text=Hello%20TifinaghTrails%2C%20I%20need%20urgent%20assistance.`}
             className="btn btn-whatsapp"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick({ location: "contact_success" })}
           >
             Contact on WhatsApp
           </a>
@@ -94,6 +97,16 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
+      <input
+        type="text"
+        name="website"
+        value={formData.website}
+        onChange={handleChange}
+        tabIndex="-1"
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ display: "none" }}
+      />
       <div className="form-row">
         <div className="form-group">
           <label className="form-label" htmlFor="c-name">

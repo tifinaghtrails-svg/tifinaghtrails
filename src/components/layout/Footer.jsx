@@ -1,10 +1,6 @@
 import { Link } from "react-router-dom";
-import Button from "../common/Button";
 import tours from "../../data/tours";
-
-const WHATSAPP_NUMBER = "+212 657-794841";
-const WHATSAPP_LINK = "https://wa.me/212657794841";
-const EMAIL = "tifinaghtrails@gmail.com";
+import { siteConfig } from "../../config/site";
 
 export default function Footer() {
   const popularTours = tours.slice(0, 4);
@@ -30,8 +26,8 @@ export default function Footer() {
             Atlas Mountains.
           </p>
           <div className="footer-social">
-            <a href={WHATSAPP_LINK} aria-label="WhatsApp">&#128172;</a>
-            <a href={`mailto:${EMAIL}`} aria-label="Email">&#9993;</a>
+            <a href={siteConfig.whatsappUrl} aria-label="WhatsApp">&#128172;</a>
+            <a href={`mailto:${siteConfig.email}`} aria-label="Email">&#9993;</a>
             <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">&#128247;</a>
             <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">&#120143;</a>
           </div>
@@ -66,19 +62,19 @@ export default function Footer() {
           <ul className="footer-contact">
             <li>
               <span className="footer-contact-icon">&#128205;</span>
-              <span>Douar Imlil, Asni, High Atlas, Morocco</span>
+              <span>{siteConfig.address.display}</span>
             </li>
             <li>
               <span className="footer-contact-icon">&#128222;</span>
-              <a href={`tel:${WHATSAPP_NUMBER}`}>{WHATSAPP_NUMBER}</a>
+              <a href={`tel:${siteConfig.phone}`}>{siteConfig.displayPhone}</a>
             </li>
             <li>
               <span className="footer-contact-icon">&#128172;</span>
-              <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a>
+              <a href={siteConfig.whatsappUrl} target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a>
             </li>
             <li>
               <span className="footer-contact-icon">&#9993;</span>
-              <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+              <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
             </li>
           </ul>
         </div>

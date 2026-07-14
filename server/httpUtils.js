@@ -1,6 +1,9 @@
-export const parseBody = (req) => {
+export const parseBody = (req, { maxBytes = 32 * 1024 } = {}) => {
   if (!req.body) return {};
   if (typeof req.body === "string") {
+    if (Buffer.byteLength(req.body, "utf8") > maxBytes) {
+      return { __tooLarge: true };
+    }
     try {
       return JSON.parse(req.body);
     } catch {

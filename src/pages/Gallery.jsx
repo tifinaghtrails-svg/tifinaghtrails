@@ -1,6 +1,5 @@
 import SEO, { BreadcrumbJsonLd } from "../utils/seo";
 import GalleryGrid from "../components/common/GalleryGrid";
-import SectionHeader from "../components/common/SectionHeader";
 
 export default function Gallery() {
   return (
