@@ -48,7 +48,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_SECURE=true
 SMTP_USER=tifinaghtrails@gmail.com
-SMTP_PASS=your-smtp-password
+SMTP_PASS=your-16-character-gmail-app-password-without-spaces
 SMTP_FROM="TifinaghTrails <tifinaghtrails@gmail.com>"
 ```
 

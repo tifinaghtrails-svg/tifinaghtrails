@@ -8,16 +8,51 @@ import {
 
 const requiredEnv = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "SMTP_FROM", "OWNER_EMAIL"];
 
-export const missingEnv = () => requiredEnv.filter((key) => !process.env[key]);
+const envValue = (key) => String(process.env[key] || "").trim();
+
+const isGmailSmtp = () => /(^|\.)gmail\.com$/i.test(envValue("SMTP_HOST"));
+
+const smtpPassword = () => {
+  const password = envValue("SMTP_PASS");
+  return isGmailSmtp() ? password.replace(/\s+/g, "") : password;
+};
+
+export const missingEnv = () => requiredEnv.filter((key) => !envValue(key));
+
+export const mailStatus = ({ includeDetails = false } = {}) => {
+  const missing = missingEnv();
+  const normalizedPassword = smtpPassword();
+  const details = includeDetails
+    ? {
+        hostConfigured: Boolean(envValue("SMTP_HOST")),
+        portConfigured: Boolean(envValue("SMTP_PORT")),
+        userConfigured: Boolean(envValue("SMTP_USER")),
+        passwordConfigured: Boolean(envValue("SMTP_PASS")),
+        fromConfigured: Boolean(envValue("SMTP_FROM")),
+        ownerConfigured: Boolean(envValue("OWNER_EMAIL")),
+        secure: String(envValue("SMTP_SECURE")).toLowerCase() === "true",
+        port: Number(envValue("SMTP_PORT") || 587),
+        gmailSmtp: isGmailSmtp(),
+        gmailAppPasswordFormat:
+          isGmailSmtp() && normalizedPassword ? normalizedPassword.length === 16 : null,
+      }
+    : undefined;
+
+  return {
+    configured: missing.length === 0,
+    missingCount: missing.length,
+    ...(details ? { details } : {}),
+  };
+};
 
 const transporter = () =>
   nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: String(process.env.SMTP_SECURE).toLowerCase() === "true",
+    host: envValue("SMTP_HOST"),
+    port: Number(envValue("SMTP_PORT") || 587),
+    secure: String(envValue("SMTP_SECURE")).toLowerCase() === "true",
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: envValue("SMTP_USER"),
+      pass: smtpPassword(),
     },
   });
 
@@ -58,16 +93,17 @@ const sendPair = async ({ customerEmail, subjectOwner, subjectCustomer, ownerHtm
   const missing = missingEnv();
   if (missing.length) {
     const error = new Error("Email service is not configured.");
+    error.code = "MAIL_CONFIG_MISSING";
     error.details = missing;
     throw error;
   }
 
-  const ownerEmail = process.env.OWNER_EMAIL;
+  const ownerEmail = envValue("OWNER_EMAIL");
   const mailer = transporter();
 
   await Promise.all([
     mailer.sendMail({
-      from: process.env.SMTP_FROM,
+      from: envValue("SMTP_FROM"),
       to: ownerEmail,
       replyTo,
       subject: subjectOwner,
@@ -75,7 +111,7 @@ const sendPair = async ({ customerEmail, subjectOwner, subjectCustomer, ownerHtm
       text: toPlainText(ownerHtml),
     }),
     mailer.sendMail({
-      from: process.env.SMTP_FROM,
+      from: envValue("SMTP_FROM"),
       to: customerEmail,
       replyTo: ownerEmail,
       subject: subjectCustomer,
