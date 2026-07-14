@@ -463,7 +463,7 @@
 .scroll-to-top {
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
+  right: 7.6rem;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -492,4 +492,54 @@
 .scroll-to-top:hover {
   transform: translateY(-4px) scale(1.1);
   box-shadow: 0 6px 25px rgba(232, 117, 26, 0.45);
+}
+
+/* ============ FLOATING WHATSAPP ============ */
+.floating-whatsapp {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--color-whatsapp);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 18px 42px rgba(37, 211, 102, 0.32);
+  z-index: 998;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.floating-whatsapp svg {
+  width: 44px;
+  height: 44px;
+  fill: currentColor;
+}
+
+.floating-whatsapp:hover {
+  background: var(--color-whatsapp-dark);
+  color: var(--color-white);
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 22px 54px rgba(37, 211, 102, 0.42);
+}
+
+@media (max-width: 600px) {
+  .floating-whatsapp {
+    right: 1rem;
+    bottom: 1rem;
+    width: 64px;
+    height: 64px;
+  }
+
+  .floating-whatsapp svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .scroll-to-top {
+    right: 5.5rem;
+    bottom: 1.6rem;
+  }
 }

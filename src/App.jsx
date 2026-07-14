@@ -3,6 +3,7 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import OptionalTracking from "./components/layout/OptionalTracking";
 import ScrollToTopBtn from "./components/layout/ScrollToTop";
+import FloatingWhatsApp from "./components/layout/FloatingWhatsApp";
 import AppRoutes from "./routes/AppRoutes";
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
           <AppRoutes />
         </main>
         <Footer />
+        <FloatingWhatsApp />
         <ScrollToTopBtn />
       </div>
     </BrowserRouter>
