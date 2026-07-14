@@ -1,4 +1,5 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const DEFAULT_API_BASE_URL = "https://mail-server-orcin.vercel.app";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, "");
 
 const postJson = async (path, payload) => {
   const response = await fetch(`${API_BASE_URL}${path}`, {
